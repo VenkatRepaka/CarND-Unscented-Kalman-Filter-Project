@@ -41,6 +41,12 @@ int main()
   ofstream est_data_lidar;
   est_data_radar.open( "/home/vagrant/project2/output_files/estimations_radar.txt", ios::out );
   est_data_lidar.open( "/home/vagrant/project2/output_files/estimations_lidar.txt", ios::out );
+  est_data_radar << "x_est" << "\t" << "y_est" << "\t" << "vx_est" << "\t" << "vy_est" << "\t" << "yaw_est" << "\t" << "yaw_rate_est" << "\t" << 
+                          "px" << "\t" << "py" << "\t" << "timestamp" << "\t" <<
+                          "x_gt" << "\t" << "y_gt" << "\t" << "vx_gt" << "\t" << "vy_gt" << "\t" << "yaw_gt" << "\t" << "yawrate_gt" << endl;
+  est_data_lidar << "x_est" << "\t" << "y_est" << "\t" << "vx_est" << "\t" << "vy_est" << "\t" << "yaw_est" << "\t" << "yaw_rate_est" << "\t" << 
+                          "px" << "\t" << "py" << "\t" << "timestamp" << "\t" <<
+                          "x_gt" << "\t" << "y_gt" << "\t" << "vx_gt" << "\t" << "vy_gt" << "\t" << "yaw_gt" << "\t" << "yawrate_gt" << endl;
 
   h.onMessage([&ukf,&tools,&estimations,&ground_truth, &est_data_radar, &est_data_lidar](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -61,7 +67,6 @@ int main()
           // j[1] is the data JSON object
           
           string sensor_measurment = j[1]["sensor_measurement"];
-          cout << sensor_measurment << endl;
           
           MeasurementPackage meas_package;
           istringstream iss(sensor_measurment);
