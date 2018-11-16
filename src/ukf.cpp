@@ -14,8 +14,8 @@ using std::vector;
  */
 UKF::UKF() {
   // Open NIS 
-  NIS_radar_.open( "../output_files/NIS_radar.txt", ios::out );
-  NIS_lidar_.open( "../output_files/NIS_lidar.txt", ios::out );
+  NIS_radar_.open( "/home/vagrant/project2/output_files/NIS_radar.txt", ios::out );
+  NIS_lidar_.open( "/home/vagrant/project2/output_files/NIS_lidar.txt", ios::out );
 
   // if this is false, laser measurements will be ignored (except during init)
   use_laser_ = true;
@@ -332,8 +332,9 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
-  /* double NIS_lidar_val_ = z_diff.transpose() * S.inverse() * z_diff;
-  NIS_lidar_ << NIS_lidar_val_ << endl; */
+  
+  double NIS_lidar_val_ = z_diff.transpose() * S.inverse() * z_diff;
+  NIS_lidar_ << NIS_lidar_val_ << endl;
 }
 
 /**
@@ -437,6 +438,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
-  /* double NIS_radar_val_ = z_diff.transpose() * S.inverse() * z_diff;
-  NIS_radar_ << NIS_radar_val_ << endl; */
+
+  double NIS_radar_val_ = z_diff.transpose() * S.inverse() * z_diff;
+  NIS_radar_ << NIS_radar_val_ << endl;
 }

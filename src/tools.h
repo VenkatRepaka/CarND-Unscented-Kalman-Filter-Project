@@ -24,8 +24,6 @@ public:
   */
   VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
 
-  double CalculateNIS(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth, const MatrixXd S);
-
 };
 
 #endif /* TOOLS_H_ */
