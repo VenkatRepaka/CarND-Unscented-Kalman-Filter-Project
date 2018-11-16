@@ -37,8 +37,12 @@ int main()
   Tools tools;
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
+  ofstream est_data_radar;
+  ofstream est_data_lidar;
+  est_data_radar.open( "/home/vagrant/project2/output_files/estimations_radar.txt", ios::out );
+  est_data_lidar.open( "/home/vagrant/project2/output_files/estimations_lidar.txt", ios::out );
 
-  h.onMessage([&ukf,&tools,&estimations,&ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&ukf,&tools,&estimations,&ground_truth, &est_data_radar, &est_data_lidar](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -57,6 +61,7 @@ int main()
           // j[1] is the data JSON object
           
           string sensor_measurment = j[1]["sensor_measurement"];
+          cout << sensor_measurment << endl;
           
           MeasurementPackage meas_package;
           istringstream iss(sensor_measurment);
@@ -65,6 +70,7 @@ int main()
     	  // reads first element from the current line
     	  string sensor_type;
     	  iss >> sensor_type;
+        string input_data;
 
     	  if (sensor_type.compare("L") == 0) {
       	  		meas_package.sensor_type_ = MeasurementPackage::LASER;
@@ -76,6 +82,7 @@ int main()
           		meas_package.raw_measurements_ << px, py;
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
+              input_data = to_string(px) + "\t" + to_string(py) + "\t" + to_string(timestamp) + "\t";
           } else if (sensor_type.compare("R") == 0) {
 
       	  		meas_package.sensor_type_ = MeasurementPackage::RADAR;
@@ -89,15 +96,21 @@ int main()
           		meas_package.raw_measurements_ << ro,theta, ro_dot;
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
+              input_data = to_string(ro * cos(theta)) + "\t" + to_string(ro * sin(theta)) + "\t" + to_string(timestamp) + "\t";
           }
           float x_gt;
     	  float y_gt;
     	  float vx_gt;
     	  float vy_gt;
+        float yaw_gt;
+        float yawrate_gt;
     	  iss >> x_gt;
     	  iss >> y_gt;
     	  iss >> vx_gt;
     	  iss >> vy_gt;
+        iss >> yaw_gt;
+        iss >> yawrate_gt;
+        input_data = input_data + to_string(x_gt) + "\t" + to_string(y_gt) + "\t" + to_string(vx_gt) + "\t" + to_string(vy_gt) + "\t" + to_string(yaw_gt) + "\t" + to_string(yawrate_gt);
     	  VectorXd gt_values(4);
     	  gt_values(0) = x_gt;
     	  gt_values(1) = y_gt; 
@@ -116,6 +129,7 @@ int main()
     	  double p_y = ukf.x_(1);
     	  double v  = ukf.x_(2);
     	  double yaw = ukf.x_(3);
+        double yaw_rate = ukf.x_(4);
 
     	  double v1 = cos(yaw)*v;
     	  double v2 = sin(yaw)*v;
@@ -126,6 +140,11 @@ int main()
     	  estimate(3) = v2;
     	  
     	  estimations.push_back(estimate);
+        if (sensor_type.compare("L") == 0) {
+          est_data_lidar << p_x << "\t" << p_y << "\t" << v1 << "\t" << v2 << "\t" << yaw << "\t" << yaw_rate << "\t" << input_data << endl;
+        } else if (sensor_type.compare("R") == 0) { 
+          est_data_radar << p_x << "\t" << p_y << "\t" << v1 << "\t" << v2 << "\t" << yaw << "\t" << yaw_rate << "\t" << input_data << endl;
+        }
 
     	  VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
 
