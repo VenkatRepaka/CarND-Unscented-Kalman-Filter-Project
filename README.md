@@ -92,6 +92,7 @@ A well written README file can enhance your project and portfolio.  Develop your
 
 
 ## How initial std_a_ and std_yawdd_ are chosen
+```
 dvy1 = lidar_estimates["vy_gt"] - radar_estimates["vy_gt"]
 dt1 = lidar_estimates["timestamp"] - radar_estimates["timestamp"]
 dvy2 = radar_estimates["vy_gt"].drop([len(radar_estimates["vy_gt"])-1], axis=0) - lidar_estimates["vy_gt"].drop([0], axis=0)
@@ -135,3 +136,4 @@ print('Std yaw_rate {}'.format(yaw_rate.std()))
 Min yaw_rate 0.0
 Max yaw_rate 0.55
 Std yaw_rate 0.16888753245074387
+```
