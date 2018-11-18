@@ -90,3 +90,48 @@ for instructions and the project rubric.
 ## How to write a README
 A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 
+
+## How initial std_a_ and std_yawdd_ are chosen
+dvy1 = lidar_estimates["vy_gt"] - radar_estimates["vy_gt"]
+dt1 = lidar_estimates["timestamp"] - radar_estimates["timestamp"]
+dvy2 = radar_estimates["vy_gt"].drop([len(radar_estimates["vy_gt"])-1], axis=0) - lidar_estimates["vy_gt"].drop([0], axis=0)
+dt2 = radar_estimates["timestamp"].drop([len(radar_estimates["timestamp"])-1], axis=0) - lidar_estimates["timestamp"].drop([0], axis=0)
+dvy = dvy1.abs().append(dvy2.abs())
+dt = dt1.abs().append(dt2.abs())/1000000
+acc = dvy/dt
+
+print('Min Y acc {}'.format(acc.min()))
+print('Max Y acc {}'.format(acc.max()))
+print('Std Y acc {}'.format(acc.std()))
+Min Y acc 0.013039999999993057
+Max Y acc 2.4458800000000003
+Std Y acc 0.7152965543550903
+
+dv = np.sqrt(dvx*dvx + dvy*dvy)
+acc = dv/dt
+print('Min acc {}'.format(acc.min()))
+print('Max acc {}'.format(acc.max()))
+print('Std acc {}'.format(acc.std()))
+Min Y acc 0.01844134485333534
+Max Y acc 3.4589966679371056
+Std Y acc 1.0115820882877125
+
+yaw1 = lidar_estimates["yaw_gt"] - radar_estimates["yaw_gt"]
+yaw2 = radar_estimates["yaw_gt"].drop([len(radar_estimates["yaw_gt"])-1], axis=0) - lidar_estimates["yaw_gt"].drop([0], axis=0)
+yaw_rate = yaw1.append(yaw2).abs()/dt
+print('Min yaw_rate {}'.format(yaw_rate.min()))
+print('Max yaw_rate {}'.format(yaw_rate.max()))
+print('Std yaw_rate {}'.format(yaw_rate.std()))
+Min yaw_rate 0.006900000000005235
+Max yaw_rate 0.5499999999999972
+Std yaw_rate 0.16731315834757196
+
+yaw_rate1 = lidar_estimates["yawrate_gt"]
+yaw_rate2 = radar_estimates["yawrate_gt"]
+yaw_rate = yaw_rate1.append(yaw_rate2).abs()
+print('Min yaw_rate {}'.format(yaw_rate.min()))
+print('Max yaw_rate {}'.format(yaw_rate.max()))
+print('Std yaw_rate {}'.format(yaw_rate.std()))
+Min yaw_rate 0.0
+Max yaw_rate 0.55
+Std yaw_rate 0.16888753245074387
