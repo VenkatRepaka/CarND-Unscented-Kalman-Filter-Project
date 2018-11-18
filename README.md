@@ -138,7 +138,7 @@ Max yaw_rate 0.55
 Std yaw_rate 0.16888753245074387
 ```
 
-## Position accuracy after runninf UKF
+## Position accuracy after running UKF
 ![alt text](https://github.com/VenkatRepaka/CarND-Unscented-Kalman-Filter-Project/blob/master/visualizations/17_27_Position_Accuracy.png)
 
 ## NIS for Radar
